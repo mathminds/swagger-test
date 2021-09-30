@@ -1,0 +1,264 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/mathuser0/MOIS/1.0.0
+info:
+  description: This is a simple API
+  version: "1.0.0"
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: developers
+    description: Operations available to regular developers
+paths:
+  /inventory:
+    get:
+      tags:
+        - developers
+      summary: searches inventory
+      operationId: searchInventory
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up inventory
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: skip
+          description: number of records to skip for pagination
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - in: query
+          name: limit
+          description: maximum number of records to return
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 50
+      responses:
+        '400':
+          description: bad input parameter
+    post:
+      tags:
+        - admins
+      summary: adds an inventory item
+      operationId: addInventory
+      description: Adds an item to the system
+      responses:
+        '201':
+          description: item created
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/responseEnvelope'
+                
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/requestEnvelope'
+        description: Inventory item to add
+components:
+  schemas:
+    issuerequest_req:
+      xml:
+        name: 'Envelope'
+      type: object
+      
+  
+  
+  
+    responseEnvelope:
+      xml:
+        name: 'Envelope'
+      type: object
+      required:
+        - Header
+        - Body
+      properties:
+        Header:
+          $ref: '#/components/schemas/commonHeader'
+        Body:
+          type: object
+          required:
+            - response
+          properties:
+            response:
+              type: object
+              
+    responseHeader:
+      type: object
+      required:
+        - apiKeyHashCode
+        - useSystemCode
+        - serviceId
+        - transactionUniqueId
+        - agreementYn
+        - timestampToken
+      properties:
+        apiKeyHashCode:
+          type: string
+          example: text
+        useSystemCode:
+          type: string
+          example: text
+        serviceId:
+          type: string
+          example: text
+        transactionUniqueId:
+          type: string
+          example: text
+        agreementYn:
+          type: string
+          example: text
+        timestampToken:
+          type: string
+          example: text
+          
+    requestEnvelope:
+      xml:
+          name: 'Envelope'
+      type: object
+      required:
+        - Header
+        - Body
+      properties:
+        Header:
+          $ref: '#/components/schemas/requestHeader'
+        Body:
+          $ref: '#/components/schemas/requestBody'
+    requestHeader:
+      type: object
+      required: 
+        - commonHeader
+      properties:
+        commonHeader:
+          $ref: '#/components/schemas/commonHeader'
+    commonHeader:
+      type: object
+      required:
+        - apiKeyHashCode
+        - useSystemCode
+        - serviceId
+        - transactionUniqueId
+      properties:
+        apiKeyHashCode:
+          type: string
+          format: uuid
+          example: 48e40558-b38c-45a0-99ad-768e5274205d
+        useSystemCode:
+          type: string
+          example: 1741000000000013
+        serviceId:
+          type: string
+          example: 1231231231231231
+        transactionUniqueId:
+          type: string
+          example: 2020081118480654712345678
+        agreementYn:
+          type: string
+          example: Y
+        timeStmapToken:
+          type: string
+          format: date-time
+          example: 2016-08-29T09:12:33.001Z
+    requestBody:
+      type: object
+      required: 
+        - request
+      properties:
+        request:
+          $ref: '#/components/schemas/issuerequest'
+    issue:
+      type: object
+      required:
+        - utlinsttCode
+        - delngSeqno
+      properties:
+        utlinsttCode:
+          type: string
+          example: 1741000000000013
+        delngSeqno: 
+          type: string
+          example: 2020081118480654712345678
+        chargerName: 
+          type: string
+          example: 김업무
+        chargerId: 
+          type: string
+          example: kimId
+        usePurps:
+          type: string
+          example: 꾸러미 발급
+        
+    issuerequest:
+      type: object
+      required:
+        - userVerifyInfo
+        - reqstInfo
+      properties:
+        userVerifyInfo:
+          $ref: '#/components/schemas/userVerifyInfo'
+        reqstInfo:
+          $ref: '#/components/schemas/reqstInfo'
+          
+    userVerifyInfo:
+      type: object
+      required:
+        - userRrn
+        - userName
+      properties:
+        userCid:
+          type: string
+          example: CI023449390_text_9203992u4234090
+        userName:
+          type: string
+          example: 홍검증
+        userSexdstn:
+          type: string
+          example: M
+        userBrthdy:
+          type: string
+          example: 19800101
+        userEmail:
+          type: string
+          example: hkd1234@hanmail.net
+        userRrn:
+          type: string
+          example: 8001011234567
+        userTelno:
+          type: string
+          example: 010-1234-5678
+        ntvfrnrSe:
+          type: string
+          example: L
+    reqstInfo:
+      type: object
+      required:
+        - utlinsttCode
+        - bundleId
+      properties:
+        utlinsttCode:
+          type: string
+          example: 1741000000000013
+        bundleId:
+          type: string
+          example: BDM0080084
